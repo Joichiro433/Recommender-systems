@@ -1,13 +1,13 @@
 # Movie Recommender System
 
-This project implements a movie recommender system using various recommendation algorithms. The system is designed to recommend movies to users based on their past ratings. The implementation is based on the book: [Pythonによる推薦システムの実装](https://www.oreilly.co.jp/books/9784873119663/)
+This project implements a movie recommender system using various recommendation algorithms. The system is designed to recommend movies to users based on their past ratings. The implementation is based on the book: [風間正弘、飯塚洸二郎、松村優也著『推薦システム実践入門』（オライリー・ジャパン、ISBN978-4-87311-966-3）](https://www.oreilly.co.jp/books/9784873119663/)
 
 ### Overview
 
 The recommender system is implemented in Python and uses several libraries including typer, pretty_errors, and polars. The system supports multiple recommendation algorithms including:
 
 - Popularity-based Recommender
--  Association Rule Recommender
+- Association Rule Recommender
 - K-Nearest Neighbors Collaborative Filtering Recommender
 - Random Forest Recommender
 - Alternating Least Squares Recommender

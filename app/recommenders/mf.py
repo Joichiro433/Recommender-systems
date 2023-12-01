@@ -6,7 +6,7 @@ import polars as pl
 from lightfm import LightFM
 from lightfm.data import Dataset as LFMDataset
 
-from utils.types import RecommendResult, Dataset, DFData, DFUserMovies, DFMovieRatingPred, DFUserMoviesPred
+from utils.types import RecommendResult, Dataset, DFData, DFUserMovies, DFUserMoviesPred
 from recommenders.base_recommend import BaseRecommender
 
 
@@ -16,16 +16,23 @@ class MFRecommender(BaseRecommender):
 
     Attributes
     ----------
-    dataset : Dataset
+    `dataset : Dataset`
         The dataset used for the recommender system.
+    `no_components : int, optional`
+        the dimensionality of the feature latent embeddings.
 
     Methods
     -------
-    recommend() -> RecommendResult
+    `recommend() -> RecommendResult`
         Generates recommendations using Matrix Factorization.
     """
-    def __init__(self, dataset: Dataset) -> None:
+    def __init__(
+            self, 
+            dataset: Dataset, 
+            no_components: int = 10,
+        ) -> None:
         super().__init__(dataset)
+        self.no_components: int = no_components
 
     def recommend(self) -> RecommendResult:
         """
@@ -33,11 +40,10 @@ class MFRecommender(BaseRecommender):
 
         Returns
         -------
-        RecommendResult
+        `RecommendResult`
             The result of the recommendation, including predicted movie ratings and predicted movies for each user.
         """
         df_train: DFData = self.dataset.df_train
-        df_test: DFData = self.dataset.df_test
         df_user_movies_test: DFUserMovies = self.dataset.df_user_movies_test
 
         unique_user_ids: pl.Series = df_train['user_id'].unique()
@@ -52,7 +58,7 @@ class MFRecommender(BaseRecommender):
         train_interactions, _ = lfm_dataset.build_interactions(user_movie_pairs)
         user_id_map, user_feature_map, item_id_map, item_feature_map = lfm_dataset.mapping()
 
-        model = LightFM(no_components=10, loss='warp', random_state=42)
+        model = LightFM(no_components=self.no_components, loss='warp', random_state=42)
         model.fit(interactions=train_interactions, epochs=100)
 
         df_user_evaluated_movies: pl.DataFrame = (
@@ -82,9 +88,5 @@ class MFRecommender(BaseRecommender):
             df_user_movies_test
             .join(pl.DataFrame(user_movies_pred), on='user_id', how='left')
         )
-        # 評価値の予測は難しいため、rmseの評価は行わない（便宜上、テストデータの予測値をそのまま返す）
-        df_movie_rating_pred: DFMovieRatingPred = (
-            df_test
-            .with_columns(rating_pred=pl.col('rating'))
-        )
-        return RecommendResult(df_movie_rating_pred=df_movie_rating_pred, df_user_movies_pred=df_user_movies_pred)
+        # 評価値の予測は難しいため、rmseの評価は行わない
+        return RecommendResult(df_movie_rating_pred=None, df_user_movies_pred=df_user_movies_pred)

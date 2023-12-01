@@ -5,7 +5,7 @@ import polars as pl
 from lightfm import LightFM
 from lightfm.data import Dataset as LFMDataset
 
-from utils.types import RecommendResult, Dataset, DFData, DFUserMovies, DFMovieRatingPred, DFUserMoviesPred
+from utils.types import RecommendResult, Dataset, DFData, DFUserMovies, DFUserMoviesPred
 from recommenders.base_recommend import BaseRecommender
 
 
@@ -15,12 +15,12 @@ def get_unique_elements(elements_list: list[list]) -> list:
 
     Parameters
     ----------
-    elements_list : list[list]
+    `elements_list : list[list]`
         A list of lists from which unique elements are to be extracted.
 
     Returns
     -------
-    list
+    `list`
         A list of unique elements.
 
     Examples
@@ -40,16 +40,34 @@ class LightFMRecommender(BaseRecommender):
 
     Attributes
     ----------
-    dataset : Dataset
+    `dataset : Dataset`
         The dataset used for the recommender system.
+    `no_components: int, optional`
+        the dimensionality of the feature latent embeddings.
+    `item_alpha: float, optional`
+        L2 penalty on item features. Tip: setting this number too high can slow
+        down training. One good way to check is if the final weights in the
+        embeddings turned out to be mostly zero. The same idea applies to
+        the user_alpha parameter.
+    `user_alpha: float, optional`
+        L2 penalty on user features.
 
     Methods
     -------
-    recommend() -> RecommendResult
+    `recommend() -> RecommendResult`
         Generates recommendations using the LightFM model.
     """
-    def __init__(self, dataset: Dataset) -> None:
+    def __init__(
+            self, 
+            dataset: Dataset, 
+            no_components: int = 10,
+            item_alpha: float = 0,
+            user_alpha: float = 0,
+        ) -> None:
         super().__init__(dataset)
+        self.no_components: int = no_components
+        self.item_alpha: float = item_alpha
+        self.user_alpha: float = user_alpha
 
     def recommend(self) -> RecommendResult:
         """
@@ -60,11 +78,10 @@ class LightFMRecommender(BaseRecommender):
 
         Returns
         -------
-        RecommendResult
+        `RecommendResult`
             The result of the recommendation, including predicted movie ratings and predicted movies for each user.
         """
         df_train: DFData = self.dataset.df_train
-        df_test: DFData = self.dataset.df_test
         df_user_movies_test: DFUserMovies = self.dataset.df_user_movies_test
 
         unique_user_ids: pl.Series = df_train['user_id'].unique()
@@ -88,7 +105,7 @@ class LightFMRecommender(BaseRecommender):
 
         user_id_map, user_feature_map, item_id_map, item_feature_map = lfm_dataset.mapping()
 
-        model = LightFM(no_components=10, loss='warp', random_state=42)
+        model = LightFM(no_components=self.no_components, loss='warp', item_alpha=self.item_alpha, user_alpha=self.user_alpha, random_state=42)
         model.fit(interactions=train_interactions, item_features=movie_features, epochs=100)
 
         df_user_evaluated_movies: pl.DataFrame = (
@@ -118,9 +135,5 @@ class LightFMRecommender(BaseRecommender):
             df_user_movies_test
             .join(pl.DataFrame(user_movies_pred), on='user_id', how='left')
         )
-        # 評価値の予測は難しいため、rmseの評価は行わない（便宜上、テストデータの予測値をそのまま返す）
-        df_movie_rating_pred: DFMovieRatingPred = (
-            df_test
-            .with_columns(rating_pred=pl.col('rating'))
-        )
-        return RecommendResult(df_movie_rating_pred=df_movie_rating_pred, df_user_movies_pred=df_user_movies_pred)
+        # 評価値の予測は難しいため、rmseの評価は行わない
+        return RecommendResult(df_movie_rating_pred=None, df_user_movies_pred=df_user_movies_pred)

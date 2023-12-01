@@ -9,7 +9,7 @@ import polars as pl
 from mlxtend.frequent_patterns import apriori
 from mlxtend.frequent_patterns import association_rules
 
-from utils.types import RecommendResult, Dataset, DFMovieRatingPred, DFUserMoviesPred
+from utils.types import RecommendResult, Dataset, DFUserMoviesPred
 from recommenders.base_recommend import BaseRecommender
 
 
@@ -28,16 +28,16 @@ class AssociationRecommender(BaseRecommender):
 
     Attributes
     ----------
-    dataset : Dataset
+    `dataset : Dataset`
         The dataset used for recommendation.
-    min_support : float
+    `min_support : float`
         The minimum support for the apriori algorithm.
-    min_threshold : float
+    `min_threshold : float`
         The minimum threshold for the association rules.
 
     Methods
     -------
-    recommend() -> RecommendResult
+    `recommend() -> RecommendResult`
         Recommends movies for each user in the dataset.
     """
     def __init__(
@@ -56,7 +56,7 @@ class AssociationRecommender(BaseRecommender):
 
         Returns
         -------
-        RecommendResult
+        `RecommendResult`
             The recommended movies for each user in the dataset.
         """
         # ユーザーが評価した映画一覧
@@ -113,12 +113,8 @@ class AssociationRecommender(BaseRecommender):
             self.dataset.df_user_movies_test
             .join(pl.DataFrame(user_movies_pred), on='user_id', how='left')
         )
-        # アソシエーションルールでは評価値の予測は難しいため、rmseの評価は行わない（便宜上、テストデータの予測値をそのまま返す）
-        df_movie_rating_pred: DFMovieRatingPred = (
-            self.dataset.df_test
-            .with_columns(rating_pred=pl.col('rating'))
-        )
-        return RecommendResult(df_movie_rating_pred=df_movie_rating_pred, df_user_movies_pred=df_user_movies_pred)
+        # アソシエーションルールでは評価値の予測は難しいため、rmseの評価は行わない
+        return RecommendResult(df_movie_rating_pred=None, df_user_movies_pred=df_user_movies_pred)
 
     def _calc_lift(self) -> DFLift:
         """

@@ -38,16 +38,16 @@ class DataLoader:
 
     Attributes
     ----------
-    num_users : int
+    `num_users : int`
         The number of users to consider in the dataset.
-    num_test_items : int
+    `num_test_items : int`
         The number of test items to consider in the dataset.
-    data_path : Path
+    `data_path : Path`
         The path to the directory containing the data.
 
     Methods
     -------
-    load() -> Dataset
+    `load() -> Dataset`
         Loads the data, preprocesses it, splits it into training and testing sets, and returns a `Dataset` object.
     """
     def __init__(
@@ -66,7 +66,7 @@ class DataLoader:
 
         Returns
         -------
-        Dataset
+        `Dataset`
             The loaded and preprocessed dataset.
         """
         df_rating_with_movie, df_movie_with_tag = self._preprocess()
@@ -92,12 +92,12 @@ class DataLoader:
 
         Parameters
         ----------
-        df_rating_with_movie : DFRatingMovie
+        `df_rating_with_movie : DFRatingMovie`
             The DataFrame containing the movie ratings.
 
         Returns
         -------
-        tuple[DFData, DFData]
+        `tuple[DFData, DFData]`
             The training and testing data.
         """
         # 学習用とテスト用にデータを分割する
@@ -123,7 +123,7 @@ class DataLoader:
 
         Returns
         -------
-        tuple[DFRatingMovie, DFMovieTag]
+        `tuple[DFRatingMovie, DFMovieTag]`
             The preprocessed movie ratings and movie tags.
         """
         df_movie: DFMovie = (

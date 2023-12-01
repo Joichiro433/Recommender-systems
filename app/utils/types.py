@@ -74,15 +74,15 @@ class Dataset:
 
 @dataclass(frozen=True)
 class RecommendResult:
-    df_movie_rating_pred: DFMovieRatingPred
+    df_movie_rating_pred: DFMovieRatingPred | None
     df_user_movies_pred: DFUserMoviesPred
 
 
 @dataclass(frozen=True)
 class Metrics:
-    rmse: float
+    rmse: float | None
     precision_at_k: float
     recall_at_k: float
 
     def __repr__(self):
-        return f"rmse={self.rmse:.3f}, Precision@K={self.precision_at_k:.3f}, Recall@K={self.recall_at_k:.3f}"
+        return f"rmse={self.rmse}, Precision@K={self.precision_at_k}, Recall@K={self.recall_at_k}"

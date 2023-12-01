@@ -5,7 +5,7 @@ import polars as pl
 from implicit.als import AlternatingLeastSquares
 from scipy.sparse import lil_matrix
 
-from utils.types import RecommendResult, Dataset, DFData, DFUserMovies, DFMovieRatingPred, DFUserMoviesPred
+from utils.types import RecommendResult, Dataset, DFData, DFUserMovies, DFUserMoviesPred
 from recommenders.base_recommend import BaseRecommender
 
 
@@ -23,15 +23,15 @@ class AlternatingLeastSquaresRecommender(BaseRecommender):
 
         Parameters
         ----------
-        dataset : Dataset
+        `dataset : Dataset`
             The dataset used for the recommender system.
-        factors : int, optional
+        `factors : int, optional`
             The number of factors to use in the ALS model, by default 10.
-        minimum_num_rating : float, optional
+        `minimum_num_rating : float, optional`
             The minimum number of ratings a movie must have to be considered, by default 0.0.
-        n_epochs : int, optional
+        `n_epochs : int, optional`
             The number of epochs to run the ALS model, by default 100.
-        alpha : float, optional
+        `alpha : float, optional`
             The confidence parameter for the ALS model, by default 1.0.
         """
         super().__init__(dataset=dataset)
@@ -46,11 +46,10 @@ class AlternatingLeastSquaresRecommender(BaseRecommender):
 
         Returns
         -------
-        RecommendResult
+        `RecommendResult`
             A data object containing the predicted movie ratings and the predicted user-movie recommendations.
         """
         df_train: DFData = self.dataset.df_train
-        df_test: DFData = self.dataset.df_test
         df_user_movies_test: DFUserMovies = self.dataset.df_user_movies_test
 
         unique_user_ids: list[int] = sorted(df_train['user_id'].unique())
@@ -92,9 +91,5 @@ class AlternatingLeastSquaresRecommender(BaseRecommender):
             df_user_movies_test
             .join(pl.DataFrame(user_movies_pred), on='user_id', how='left')
         )
-        # ALSでは評価値の予測は難しいため、rmseの評価は行わない（便宜上、テストデータの予測値をそのまま返す）
-        df_movie_rating_pred: DFMovieRatingPred = (
-            df_test
-            .with_columns(rating_pred=pl.col('rating'))
-        )
-        return RecommendResult(df_movie_rating_pred=df_movie_rating_pred, df_user_movies_pred=df_user_movies_pred)
+        # ALSでは評価値の予測は難しいため、rmseの評価は行わない
+        return RecommendResult(df_movie_rating_pred=None, df_user_movies_pred=df_user_movies_pred)

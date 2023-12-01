@@ -12,14 +12,14 @@ class BaseRecommender(ABC):
 
     Attributes
     ----------
-    dataset : Dataset
+    `dataset : Dataset`
         The dataset used for the recommender system.
 
     Methods
     -------
-    recommend() -> RecommendResult
+    `recommend() -> RecommendResult`
         Abstract method to generate movie recommendations for each user in the dataset.
-    run_sample(k: int = 10) -> None
+    `run_sample(k: int = 10) -> None`
         Runs a sample recommendation, calculates metrics, and prints the results.
     """
     def __init__(self, dataset: Dataset) -> None:
@@ -32,7 +32,7 @@ class BaseRecommender(ABC):
 
         Raises
         ------
-        NotImplementedError
+        `NotImplementedError`
             This method must be implemented in a subclass.
         """
         raise NotImplementedError()
@@ -43,7 +43,7 @@ class BaseRecommender(ABC):
 
         Parameters
         ----------
-        k : int, optional
+        `k : int, optional`
             The number of top recommendations to consider, by default 10.
         """
         recommend_result: RecommendResult = self.recommend()
@@ -54,6 +54,6 @@ class BaseRecommender(ABC):
             k=k,
         )
 
-        print(recommend_result.df_movie_rating_pred.sort('user_id'))
-        print(recommend_result.df_user_movies_pred.sort('user_id'))
+        print(recommend_result.df_movie_rating_pred)
+        print(recommend_result.df_user_movies_pred)
         print(metrics)

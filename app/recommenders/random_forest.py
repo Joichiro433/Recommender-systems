@@ -50,12 +50,12 @@ class RandomForestRecommender(BaseRecommender):
 
     Attributes
     ----------
-    dataset : Dataset
+    `dataset : Dataset`
         The dataset containing the movie ratings and other features.
 
     Methods
     -------
-    recommend() -> RecommendResult
+    `recommend() -> RecommendResult`
         Trains the model, makes predictions, and returns the recommended movies for each user.
     """
     def __init__(self, dataset: Dataset) -> None:
@@ -67,7 +67,7 @@ class RandomForestRecommender(BaseRecommender):
 
         Returns
         -------
-        RecommendResult
+        `RecommendResult`
             The predicted movie ratings and the top 10 recommended movies for each user.
         """
         df_train, df_test, df_train_all = self._calc_features()
@@ -123,7 +123,7 @@ class RandomForestRecommender(BaseRecommender):
 
         Returns
         -------
-        tuple[pl.DataFrame, pl.DataFrame, pl.DataFrame]
+        `tuple[pl.DataFrame, pl.DataFrame, pl.DataFrame]`
             The training data, test data, and all data with the calculated features.
         """
         df_train: DFData = self.dataset.df_train
@@ -183,12 +183,12 @@ class RandomForestRecommender(BaseRecommender):
 
         Parameters
         ----------
-        grouping_col : str
+        `grouping_col : str`
             The column to group by when calculating the statistics.
 
         Returns
         -------
-        pl.DataFrame
+        `pl.DataFrame`
             The DataFrame with the calculated statistical features.
         """
         df: pl.DataFrame = (

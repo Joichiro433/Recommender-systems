@@ -11,13 +11,13 @@ class MetricCalculator:
 
     Class Methods
     -------------
-    calc(cls, df_movie_rating_pred: DFMovieRatingPred, df_user_movies_pred: DFUserMoviesPred, k: int) -> Metrics
+    `calc(cls, df_movie_rating_pred: DFMovieRatingPred | None, df_user_movies_pred: DFUserMoviesPred, k: int) -> Metrics`
         Calculates the root mean square error (RMSE), precision at k, and recall at k, and returns them as a `Metrics` object.
     """
     @classmethod
     def calc(
             cls, 
-            df_movie_rating_pred: DFMovieRatingPred,
+            df_movie_rating_pred: DFMovieRatingPred | None,
             df_user_movies_pred: DFUserMoviesPred,
             k: int,
         ) -> Metrics:
@@ -26,19 +26,19 @@ class MetricCalculator:
 
         Parameters
         ----------
-        df_movie_rating_pred : DFMovieRatingPred
+        `df_movie_rating_pred : DFMovieRatingPred | None`
             DataFrame containing the true and predicted movie ratings.
-        df_user_movies_pred : DFUserMoviesPred
+        `df_user_movies_pred : DFUserMoviesPred`
             DataFrame containing the user movies predictions.
-        k : int
+        `k : int`
             The number of top recommendations to consider.
 
         Returns
         -------
-        Metrics
+        `Metrics`
             A Metrics object containing the RMSE, precision at k, and recall at k.
         """
-        rmse: float = cls._calc_rmse(df_movie_rating_pred=df_movie_rating_pred)
+        rmse: float | None = cls._calc_rmse(df_movie_rating_pred=df_movie_rating_pred) if df_movie_rating_pred is not None else None
         precision_at_k: float = cls._calc_precision_at_k(df_user_movies=df_user_movies_pred, k=k)
         recall_at_k: float = cls._calc_recall_at_k(df_user_movies=df_user_movies_pred, k=k)
         return Metrics(rmse=rmse, precision_at_k=precision_at_k, recall_at_k=recall_at_k)
@@ -53,12 +53,12 @@ class MetricCalculator:
 
         Parameters
         ----------
-        df_movie_rating_pred : DFMovieRatingPred
+        `df_movie_rating_pred : DFMovieRatingPred`
             DataFrame containing the true and predicted movie ratings.
 
         Returns
         -------
-        float
+        `float`
             The calculated RMSE.
         """
         true_rating = df_movie_rating_pred['rating']
@@ -76,14 +76,14 @@ class MetricCalculator:
 
         Parameters
         ----------
-        df_user_movies : DFUserMoviesPred
+        `df_user_movies : DFUserMoviesPred`
             DataFrame containing the user movies predictions.
-        k : int
+        `k : int`
             The number of top recommendations to consider.
 
         Returns
         -------
-        float
+        `float`
             The calculated precision at k.
         """
         df_user_precision = (
@@ -105,14 +105,14 @@ class MetricCalculator:
 
         Parameters
         ----------
-        df_user_movies : DFUserMoviesPred
+        `df_user_movies : DFUserMoviesPred`
             DataFrame containing the user movies predictions.
-        k : int
+        `k : int`
             The number of top recommendations to consider.
 
         Returns
         -------
-        float
+        `float`
             The calculated recall at k.
         """
         df_user_recall = (
@@ -134,14 +134,14 @@ class MetricCalculator:
 
         Parameters
         ----------
-        df_user_movies : DFUserMoviesPred
+        `df_user_movies : DFUserMoviesPred`
             DataFrame containing the user movies predictions.
-        k : int
+        `k : int`
             The number of top recommendations to consider.
 
         Returns
         -------
-        float
+        `float`
             The calculated F-score at k.
         """
         precision_at_k: float = cls._calc_precision_at_k(df_user_movies=df_user_movies, k=k)

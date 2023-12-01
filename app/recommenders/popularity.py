@@ -16,14 +16,14 @@ class PopularityRecommender(BaseRecommender):
 
     Attributes
     ----------
-    dataset : Dataset
+    `dataset : Dataset`
         The dataset containing the movie ratings.
-    minimum_num_rating : int
+    `minimum_num_rating : int`
         The minimum number of ratings a movie must have to be considered.
 
     Methods
     -------
-    recommend() -> RecommendResult
+    `recommend() -> RecommendResult`
         Recommends movies for each user in the dataset. The recommendations are based on the popularity of the movies.
     """
     def __init__(self, dataset: Dataset, minimum_num_rating: int = 200) -> None:
@@ -49,7 +49,7 @@ class PopularityRecommender(BaseRecommender):
 
         Returns
         -------
-        DFMovieRatingPred
+        `DFMovieRatingPred`
             The DataFrame containing the true and predicted ratings for each movie in the test set.
         """
         df_train: DFData = self.dataset.df_train
@@ -74,7 +74,7 @@ class PopularityRecommender(BaseRecommender):
 
         Returns
         -------
-        DFUserMoviesPred
+        `DFUserMoviesPred`
             The DataFrame containing the top 10 recommended movies for each user.
         """
         df_train: DFData = self.dataset.df_train
